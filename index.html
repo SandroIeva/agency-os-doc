@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agency OS — Concept & Documentation</title>
+<meta name="description" content="Agency OS is a native desktop application for creative agencies. Built with Tauri 2, React, Supabase, and multi-model AI via OpenRouter.">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0B0B0F;--bg2:#13131A;--bg3:#1A1A24;--border:#ffffff0A;--border2:#ffffff12;--text:#ffffffe6;--text2:#ffffffa0;--text3:#ffffff60;--accent:#8B7AFF;--accent2:#6C5CE7;--pink:#E84393;--teal:#00B894;--font:'Geist',-apple-system,sans-serif}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(11,11,15,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+nav .logo{font-size:18px;font-weight:600;letter-spacing:-0.5px}
+nav .logo span{color:var(--text3);font-weight:400;font-size:12px;border:1px solid var(--text3);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:middle}
+nav ul{display:flex;gap:32px;list-style:none}
+nav a{color:var(--text2);font-size:13px;letter-spacing:0.5px}
+nav a:hover{color:var(--text);text-decoration:none}
+
+/* Hero */
+.hero{padding:160px 48px 100px;max-width:900px;position:relative}
+.hero h1{font-size:56px;font-weight:300;letter-spacing:-2px;line-height:1.1;margin-bottom:20px}
+.hero h1 strong{font-weight:600}
+.hero p{font-size:20px;color:var(--text2);max-width:600px;line-height:1.6;font-weight:300}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:20px;border:1px solid var(--border2);font-size:12px;color:var(--text2);margin-bottom:24px;background:var(--bg2)}
+.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal)}
+
+/* Section */
+section{padding:80px 48px;border-top:1px solid var(--border)}
+.section-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text3);margin-bottom:12px}
+h2{font-size:32px;font-weight:500;letter-spacing:-1px;margin-bottom:8px}
+h2+p{color:var(--text2);font-size:16px;margin-bottom:40px;max-width:600px}
+h3{font-size:18px;font-weight:500;margin-bottom:8px;margin-top:32px}
+
+/* Grid */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.card{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:28px;transition:border-color 0.3s}
+.card:hover{border-color:#ffffff25}
+.card-icon{font-size:28px;margin-bottom:16px}
+.card h4{font-size:15px;font-weight:500;margin-bottom:6px}
+.card p{font-size:13px;color:var(--text2);line-height:1.6}
+.card .tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;background:var(--accent);color:#fff;font-weight:500;margin-top:10px}
+.card .tag-outline{display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid var(--border2);color:var(--text2);margin-top:10px;margin-right:4px}
+
+/* Tech stack */
+.stack-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.stack-item{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:10px;border:1px solid var(--border2);font-size:13px;color:var(--text2);background:var(--bg2)}
+.stack-item strong{color:var(--text);font-weight:500}
+
+/* Architecture */
+.arch-box{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:32px;margin-bottom:24px}
+.arch-flow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 0}
+.arch-node{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500}
+.arch-arrow{color:var(--text3);font-size:16px}
+
+/* Roadmap */
+.phase{display:flex;gap:24px;margin-bottom:32px;position:relative}
+.phase::before{content:'';position:absolute;left:15px;top:36px;bottom:-32px;width:1px;background:var(--border2)}
+.phase:last-child::before{display:none}
+.phase-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;position:relative;z-index:1}
+.phase-content{flex:1}
+.phase-content h4{font-size:16px;font-weight:500;margin-bottom:4px}
+.phase-content .timeframe{font-size:12px;color:var(--text3);margin-bottom:8px}
+.phase-content ul{list-style:none;padding:0}
+.phase-content li{font-size:13px;color:var(--text2);padding:3px 0;padding-left:16px;position:relative}
+.phase-content li::before{content:'→';position:absolute;left:0;color:var(--text3)}
+
+/* LLM Context */
+.llm-block{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:24px;font-family:'Geist Mono',monospace;font-size:12px;color:var(--text2);line-height:1.8;white-space:pre-wrap;overflow-x:auto;margin-bottom:16px}
+
+/* Table */
+table{width:100%;border-collapse:collapse;margin:16px 0}
+th{text-align:left;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:8px 12px;border-bottom:1px solid var(--border2)}
+td{font-size:13px;padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2)}
+td:first-child{color:var(--text);font-weight:500}
+
+/* Footer */
+footer{padding:48px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text3)}
+
+/* Mobile */
+@media(max-width:768px){
+  nav{padding:16px 24px}
+  nav ul{display:none}
+  .hero{padding:120px 24px 60px}
+  .hero h1{font-size:36px}
+  section{padding:48px 24px}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .phase{gap:16px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">i7 <span>OS</span></div>
+  <ul>
+    <li><a href="#concept">Concept</a></li>
+    <li><a href="#modules">Modules</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#ai">AI</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#llm-context">LLM context</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge"><span class="dot"></span> In development — Phase 1</div>
+  <h1><strong>Agency OS</strong> — the workspace for creative teams</h1>
+  <p>A native desktop application that combines project management, brand intelligence, team communication, and multi-model AI in one unified experience. Built with Tauri 2, React, and Supabase. macOS first.</p>
+</div>
+
+<!-- Concept -->
+<section id="concept">
+  <div class="section-label">Concept</div>
+  <h2>One app instead of twelve</h2>
+  <p>Creative agencies run on Slack, Notion, Figma, Google Drive, Asana, invoicing tools, and scattered spreadsheets. Agency OS replaces this fragmented workflow with a single native application.</p>
+
+  <div class="grid-2" style="margin-top:32px">
+    <div class="card">
+      <h4>Not a PM tool with AI bolted on</h4>
+      <p>Agency OS is a brand intelligence platform with operations and real-time communication attached. The AI knows your brand voice, personas, and guidelines — every output is on-brand by default.</p>
+    </div>
+    <div class="card">
+      <h4>Native desktop, not another browser tab</h4>
+      <p>Tauri 2 delivers a 3–8 MB binary that launches in under 0.5 seconds and uses 30–50 MB RAM. No Electron bloat, no web app lag. System notifications, file system access, offline resilience.</p>
+    </div>
+    <div class="card">
+      <h4>Obsidian meets aWork</h4>
+      <p>Knowledge management with the depth of Obsidian — Markdown docs, linked references, brand knowledge base. Task delegation and team coordination with the structure of aWork — kanban, calendar, time tracking.</p>
+    </div>
+    <div class="card">
+      <h4>Multi-model AI via OpenRouter</h4>
+      <p>Every team member chooses their preferred AI model — Claude, GPT, Gemini, Llama. One API, one billing, all models. Brand context is injected into every prompt regardless of which model responds.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Modules -->
+<section id="modules">
+  <div class="section-label">Modules</div>
+  <h2>Seven core modules</h2>
+  <p>Each module is accessible from a circular scroll-to-navigate menu. Sub-items appear as orbital cards around the center ring.</p>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-icon">◉</div>
+      <h4>Tasks</h4>
+      <p>Kanban boards with drag-and-drop. Time tracking per task. Delegate to team members or freelancers. Priority levels, due dates, file attachments.</p>
+      <span class="tag-outline">Time tracking</span>
+      <span class="tag-outline">Delegate</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">◎</div>
+      <h4>Chat</h4>
+      <p>Project-linked channels with threaded messages. Direct messages. Voice and video calls via LiveKit. @ai mentions for instant AI assistance in any conversation.</p>
+      <span class="tag-outline">Realtime</span>
+      <span class="tag-outline">LiveKit</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">◈</div>
+      <h4>Plan</h4>
+      <p>Calendar view across projects. Governance and approval workflows. Kanban at the project level — track milestones, not just tasks.</p>
+      <span class="tag-outline">Calendar</span>
+      <span class="tag-outline">Governance</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">◇</div>
+      <h4>Files &amp; Brand</h4>
+      <p>Brand assets vault with version history. Brand core: voice, personas, positioning, guidelines. Competitor intelligence. Image and file storage via Supabase Storage.</p>
+      <span class="tag-outline">Brand core</span>
+      <span class="tag-outline">Personas</span>
+      <span class="tag-outline">Competitor</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">◆</div>
+      <h4>Create</h4>
+      <p>Mini apps for creative work — brainstorm sessions, campaign planning, visual generation, template management. The creative workbench inside the OS.</p>
+      <span class="tag-outline">Mini apps</span>
+      <span class="tag-outline">Templates</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">◌</div>
+      <h4>Task Force</h4>
+      <p>AI agents with specific skills. Assign tasks to AI agents — competitor reports, content drafts, research summaries. Each agent has a defined skill set and brand context.</p>
+      <span class="tag">AI-powered</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">+</div>
+      <h4>Projects</h4>
+      <p>The container that ties everything together. Each project has its own tasks, chat channel, files, docs, and timeline. Linked to clients from the CRM.</p>
+      <span class="tag-outline">Container</span>
+    </div>
+  </div>
+</section>
+
+<!-- Architecture -->
+<section id="architecture">
+  <div class="section-label">Architecture</div>
+  <h2>Tech stack</h2>
+  <p>Chosen for native performance, developer familiarity, and real-time collaboration capabilities.</p>
+
+  <div class="stack-row">
+    <div class="stack-item"><strong>Tauri 2</strong> native shell (Rust)</div>
+    <div class="stack-item"><strong>React 19</strong> + Vite</div>
+    <div class="stack-item"><strong>Supabase</strong> PostgreSQL + Auth + Realtime + Storage</div>
+  </div>
+  <div class="stack-row">
+    <div class="stack-item"><strong>OpenRouter</strong> multi-model AI</div>
+    <div class="stack-item"><strong>LiveKit</strong> voice + video</div>
+    <div class="stack-item"><strong>Tiptap</strong> + Yjs collaborative docs</div>
+  </div>
+  <div class="stack-row">
+    <div class="stack-item"><strong>Framer Motion</strong> animations</div>
+    <div class="stack-item"><strong>Three.js</strong> AI sphere</div>
+    <div class="stack-item"><strong>Web Audio API</strong> sound effects</div>
+  </div>
+
+  <h3>Data flow</h3>
+  <div class="arch-box">
+    <div class="arch-flow">
+      <span class="arch-node" style="background:#1a1a2e;border:1px solid var(--accent);color:var(--accent)">User input</span>
+      <span class="arch-arrow">→</span>
+      <span class="arch-node" style="background:#1a1a2e;border:1px solid var(--pink);color:var(--pink)">Brand context injector</span>
+      <span class="arch-arrow">→</span>
+      <span class="arch-node" style="background:#1a1a2e;border:1px solid var(--teal);color:var(--teal)">OpenRouter API</span>
+      <span class="arch-arrow">→</span>
+      <span class="arch-node" style="background:#1a1a2e;border:1px solid var(--text2);color:var(--text2)">Claude / GPT / Gemini</span>
+    </div>
+    <p style="font-size:13px;color:var(--text3);margin-top:12px">Every AI call is enriched with brand context (tone, personas, guidelines) before reaching any model. The response is always on-brand regardless of which model generates it.</p>
+  </div>
+
+  <h3>Database schema (MVP)</h3>
+  <table>
+    <tr><th>Table</th><th>Purpose</th><th>Key fields</th></tr>
+    <tr><td>teams</td><td>Team container</td><td>name, logo_url, owner_id</td></tr>
+    <tr><td>profiles</td><td>User profiles + AI pref</td><td>display_name, avatar, preferred_model</td></tr>
+    <tr><td>projects</td><td>Project containers</td><td>name, status, deadline, team_id</td></tr>
+    <tr><td>tasks</td><td>Kanban cards</td><td>title, status, assignee, priority, project_id</td></tr>
+    <tr><td>messages</td><td>Chat (Realtime)</td><td>channel, content, attachments, sender_id</td></tr>
+    <tr><td>documents</td><td>Collaborative docs</td><td>title, yjs_state, project_id</td></tr>
+    <tr><td>brand_assets</td><td>Brand vault</td><td>name, file_url, type, tags, version</td></tr>
+    <tr><td>brand_knowledge</td><td>AI context</td><td>section, content, team_id</td></tr>
+    <tr><td>files</td><td>File metadata</td><td>name, path, mime_type, project_id</td></tr>
+    <tr><td>notifications</td><td>In-app alerts</td><td>type, title, read, recipient_id</td></tr>
+  </table>
+
+  <h3>Platform strategy</h3>
+  <table>
+    <tr><th>Platform</th><th>Technology</th><th>Timeline</th></tr>
+    <tr><td>macOS</td><td>Tauri 2 (WebKit)</td><td>Phase 1 — launch platform</td></tr>
+    <tr><td>Windows</td><td>Tauri 2 (WebView2)</td><td>Phase 4</td></tr>
+    <tr><td>iOS</td><td>Tauri 2 Mobile (Safari WebView)</td><td>Phase 5</td></tr>
+    <tr><td>Android</td><td>Tauri 2 Mobile (Chrome WebView)</td><td>Phase 5</td></tr>
+  </table>
+</section>
+
+<!-- AI -->
+<section id="ai">
+  <div class="section-label">AI integration</div>
+  <h2>Multi-model AI with brand knowledge</h2>
+  <p>The AI layer is not a chatbot bolted on. It's the intelligence backbone woven into every module.</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h4>Voice interface</h4>
+      <p>Press the mic button to speak. Web Speech API transcribes in real-time. The AI responds through a 3D animated sphere (Three.js GLSL shaders) with speech synthesis. Full conversational flow without typing.</p>
+    </div>
+    <div class="card">
+      <h4>Per-user model selection</h4>
+      <p>Each team member picks their preferred model in settings. All models receive the same brand context. Claude for nuanced writing, GPT-4o for speed, Gemini for multimodal. OpenRouter handles routing and billing.</p>
+    </div>
+    <div class="card">
+      <h4>Brand context injection</h4>
+      <p>Before any prompt reaches any model, a system prompt is built from your brand knowledge: tone of voice, personas, positioning, guidelines. Stored in Supabase, editable by the team, injected automatically.</p>
+    </div>
+    <div class="card">
+      <h4>AI agents (Task Force)</h4>
+      <p>Autonomous agents with defined skills — competitor analysis, content drafting, research synthesis. Assign a task to an agent, get a notification when it's done. Each agent inherits the brand context.</p>
+    </div>
+  </div>
+
+  <h3>Where AI appears</h3>
+  <table>
+    <tr><th>Surface</th><th>Action</th><th>Trigger</th></tr>
+    <tr><td>Voice assistant</td><td>Speak naturally, get AI response</td><td>Mic button</td></tr>
+    <tr><td>Chat @ai</td><td>Ask questions in any channel</td><td>@ai mention</td></tr>
+    <tr><td>Doc editor</td><td>Generate drafts in brand voice</td><td>"Draft with AI" button</td></tr>
+    <tr><td>Task cards</td><td>Expand title into description</td><td>"AI expand" button</td></tr>
+    <tr><td>Brand vault</td><td>Generate personas from brief</td><td>"Generate" button</td></tr>
+    <tr><td>Brand voice check</td><td>Review text against guidelines</td><td>Right-click → check</td></tr>
+  </table>
+</section>
+
+<!-- Notifications -->
+<section id="notifications">
+  <div class="section-label">Notifications</div>
+  <h2>Real-time awareness</h2>
+  <p>Three layers of notifications keep the team informed without interrupting flow.</p>
+
+  <div class="grid-3">
+    <div class="card">
+      <h4>In-app</h4>
+      <p>Bell icon with badge count. Notification center with task assignments, AI completions, chat mentions. Mark as read, click to navigate.</p>
+      <span class="tag-outline">Phase 1</span>
+    </div>
+    <div class="card">
+      <h4>Native desktop</h4>
+      <p>Tauri notification API for background alerts. macOS notification center, dock badge. Sound effects for different event types.</p>
+      <span class="tag-outline">Phase 1</span>
+    </div>
+    <div class="card">
+      <h4>Mobile push</h4>
+      <p>Firebase Cloud Messaging for iOS/Android companion app. Deep links into specific tasks, chats, or docs.</p>
+      <span class="tag-outline">Phase 5</span>
+    </div>
+  </div>
+</section>
+
+<!-- Roadmap -->
+<section id="roadmap">
+  <div class="section-label">Roadmap</div>
+  <h2>MVP roadmap</h2>
+  <p>Single-user first, multi-user in Phase 3. Each phase delivers a usable product.</p>
+
+  <div style="margin-top:32px">
+    <div class="phase">
+      <div class="phase-dot" style="background:var(--accent);color:#fff">1</div>
+      <div class="phase-content">
+        <h4>Foundation</h4>
+        <div class="timeframe">Weeks 1–3 · Single user</div>
+        <ul>
+          <li>Tauri 2 + React + Vite scaffold, deployed on macOS</li>
+          <li>Supabase project (EU Frankfurt) with Google OAuth</li>
+          <li>Dashboard with circular scroll menu and start view</li>
+          <li>Tasks module: kanban board, task cards, time tracking</li>
+          <li>Voice AI: mic input → OpenRouter → speech synthesis → sphere animation</li>
+          <li>In-app notification system + native macOS notifications</li>
+          <li>Sound design on all interactions (Web Audio API)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-dot" style="background:var(--teal);color:#fff">2</div>
+      <div class="phase-content">
+        <h4>Knowledge layer</h4>
+        <div class="timeframe">Weeks 4–6 · Single user</div>
+        <ul>
+          <li>Plan module: calendar, governance, project-level kanban</li>
+          <li>Files + Brand module: asset vault, brand core, personas, competitor</li>
+          <li>Create module: mini apps (brainstorm, campaigns, visuals, templates)</li>
+          <li>Markdown documents with Tiptap editor</li>
+          <li>Brand knowledge base — feeds into all AI interactions</li>
+          <li>Supabase Storage for files, images, videos</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-dot" style="background:var(--pink);color:#fff">3</div>
+      <div class="phase-content">
+        <h4>Multi-user + communication</h4>
+        <div class="timeframe">Weeks 7–10</div>
+        <ul>
+          <li>Team management: invite links, roles (owner / member)</li>
+          <li>Chat: project channels, DMs, file sharing (Supabase Realtime)</li>
+          <li>Voice + video calls (LiveKit, free 5000 min/month)</li>
+          <li>Task delegation with notifications</li>
+          <li>Collaborative Markdown docs (Yjs CRDT sync)</li>
+          <li>Row-Level Security on all tables for data isolation</li>
+          <li>Task Force: AI agents with skills</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-dot" style="background:#EF9F27;color:#000">4</div>
+      <div class="phase-content">
+        <h4>Intelligence + scale</h4>
+        <div class="timeframe">Weeks 11–14</div>
+        <ul>
+          <li>AI agents: autonomous competitor monitoring, content drafting</li>
+          <li>Integrations: Google Drive, Figma API</li>
+          <li>Analytics dashboard: social metrics, revenue, content performance</li>
+          <li>Windows build via Tauri 2 (WebView2)</li>
+          <li>Push notifications via Firebase Cloud Messaging</li>
+          <li>iOS + Android companion app (Tauri 2 Mobile)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LLM Context -->
+<section id="llm-context">
+  <div class="section-label">LLM context</div>
+  <h2>Context for AI assistants</h2>
+  <p>If you're an LLM helping build Agency OS, here's what you need to know.</p>
+
+  <h3>Project identity</h3>
+  <div class="llm-block">Project: Agency OS (also referred to as "i7 OS" in UI branding)
+Author: Sandro Ieva — sandroieva.com — mail@sandroieva.com
+Type: Native desktop application for creative agencies and micro-studios
+Stage: Prototype / MVP in active development
+Repository: github.com/SandroIeva/agency-os-prototype
+Deployment: Vercel (prototype), Tauri desktop (production target)</div>
+
+  <h3>Tech stack</h3>
+  <div class="llm-block">Desktop shell:    Tauri 2 (Rust) — macOS first, then Windows, then iOS/Android
+Frontend:         React 19 + Vite + Tailwind CSS
+Backend:          Supabase (PostgreSQL + Auth + Realtime + Storage) — EU Frankfurt
+AI:               OpenRouter API (multi-model: Claude, GPT, Gemini, Llama)
+Animations:       Framer Motion (UI) + Three.js GLSL shaders (AI sphere)
+Voice:            Web Speech API (input) + speechSynthesis (output)
+Sound:            Web Audio API (synthesized, no external files)
+Collaboration:    Tiptap + Yjs (CRDT) for real-time doc editing
+Communication:    Supabase Realtime (chat) + LiveKit (voice/video)
+Styling:          Tailwind CSS + Radix UI + Geist font
+State:            Zustand + React Query</div>
+
+  <h3>Architecture principles</h3>
+  <div class="llm-block">1. SINGLE USER FIRST — build every feature for one user before adding team support
+2. BRAND CONTEXT INJECTION — every AI call includes brand voice, personas, guidelines
+3. MODEL AGNOSTIC — OpenRouter handles routing; user selects preferred model
+4. NATIVE FIRST — use Tauri APIs for notifications, file system, system tray
+5. OFFLINE RESILIENT — React Query cache + optimistic updates
+6. RESPONSIVE FROM DAY 1 — CSS breakpoints for future mobile companion
+7. SUPABASE RLS — user_id on every table from the start, enforce in Phase 3</div>
+
+  <h3>Design language</h3>
+  <div class="llm-block">Theme:            Dark (#0B0B0F background, #111117 surfaces)
+Font:             Geist (sans-serif) — all UI text
+Accent:           Purple-pink gradient (sphere), white (active states)
+Corners:          Large radius (16-28px on cards, 50% on icons)
+Animations:       Framer Motion springs, soft easing [0.22, 0.68, 0.35, 1.0]
+Sound:            Sine wave tones, ascending arpeggios for positive actions
+Sphere:           Three.js with GLSL fragment shader (FBM noise, rose-purple-blue palette)
+Menu:             Circular segmented ring, scroll-to-navigate, orbital card sub-items
+Icons:            Custom SVG icons with rounded stroke style</div>
+
+  <h3>Module structure</h3>
+  <div class="llm-block">TASKS      → Time Tracking, Delegate Tasks
+CHAT       → Team, Clients, Channels, AI Chat, Calls
+PLAN       → Calendar, Governance, Kanban (project level)
+FILES      → Brand Core, Brand Assets, Images, Competitor, Personas, Raw, Links
+CREATE     → Mini Apps (Brainstorm, Campaigns, Visuals, Templates)
+TASK FORCE → AI Agents, Skillz
+PROJECTS   → Container linking tasks, chat, files, docs per project</div>
+
+  <h3>Key files</h3>
+  <div class="llm-block">src/App.jsx          Main application component (circular menu, voice AI, dashboard)
+api/chat.js          Vercel serverless proxy for Claude/OpenRouter API
+index.html           Entry point with Geist font
+vite.config.js       Vite configuration
+package.json         Dependencies: react, framer-motion, three</div>
+
+  <h3>Current state</h3>
+  <div class="llm-block">DONE:
+✓ Circular scroll menu with segmented ring and orbital sub-items
+✓ Start view with greeting and task list
+✓ Voice AI: mic → transcription → Claude API → speech synthesis → sphere animation
+✓ Three.js GLSL shader sphere with FBM noise color gradients
+✓ Framer Motion animations throughout
+✓ Web Audio API sound effects on all interactions
+✓ Vercel deployment with serverless API proxy
+
+TODO (Phase 1):
+○ Tauri 2 desktop scaffold (currently web-only prototype)
+○ Tasks module with kanban drag-and-drop
+○ Supabase schema setup with Google OAuth
+○ In-app notification center
+○ Time tracking per task
+○ OpenRouter integration (replacing direct Claude API)</div>
+</section>
+
+<footer>
+  <span>Agency OS · sandroieva.com</span>
+  <span>Built with Tauri 2, React, Supabase, and a lot of Claude</span>
+</footer>
+
+</body>
+</html>
