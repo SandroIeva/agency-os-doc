@@ -3,6 +3,7 @@
 > The workspace for creative teams — a native desktop application combining project management, brand intelligence, team communication, and multi-model AI.
 
 **Status:** In development — Phase 1  
+**Doc** https://agency-os-doc.vercel.app/
 **Author:** [Sandro Ieva](https://sandroieva.com) · mail@sandroieva.com  
 
 ---
