@@ -4,8 +4,6 @@
 
 **Status:** In development — Phase 1  
 **Author:** [Sandro Ieva](https://sandroieva.com) · mail@sandroieva.com  
-**Live docs:** [agency-os-docs.vercel.app](https://agency-os-docs.vercel.app)  
-**Prototype:** [agency-os-prototype.vercel.app](https://agency-os-prototype.vercel.app)
 
 ---
 
