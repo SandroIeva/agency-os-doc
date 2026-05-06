@@ -4,7 +4,7 @@
 
 **Status:** In development — Phase 1  
 **Doc** https://agency-os-doc.vercel.app
-**Author:** [Sandro Ieva](https://sandroieva.com) · mail@sandroieva.com  
+
 
 ---
 
